@@ -10,51 +10,61 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#define _GNU_SOURCE
 #include "stdlib.h"
 #include "stdio.h"
 #include "unistd.h"
 #include "string.h"
-#define	BUF 10
-
+#define	BUF 5
 
 int main(int argc, char **argv)
 {
 	int	x;
+	int	i;
+	int	len;
 	char	*buf;
 	char	*tmp;
-	
 	char	*str;
 	char	*ptr;
 
+	ptr = 0;
 	str = 0;
 	buf = 0;
 	tmp = 0;
-	x = 0;
+	x = 1;
+	i = 0;
 	if (argc != 2)
 		return (0);
-
 	while(x)
 	{
+		printf("__Iteration_%d__\n", i);
 		tmp = str;
+		printf("tmp: %s\n", tmp);
 		buf = (char *)calloc((BUF + 1), sizeof(char));
 		x = read(0, buf, BUF);
+		printf("buf: %s\n", buf);
+
 		if (x == -1)
-		{
 			stderr;
-		}
-		else if (x == 0)
-		       break;	
-		str = (char *)calloc((strlen(tmp) + strlen(buf) + 1), sizeof(char));
-		memmove(str, tmp, strlen(tmp));
-		memmove(str + strlen(tmp), buf, strlen(buf));
+		str = (char *)calloc((i * BUF + 1), sizeof(char));
+		memmove(str, tmp, i * BUF);
+		memmove(str + i * BUF, buf, x);
 		free(tmp);
 		free(buf);
+		printf("str: %s\n", str);
+		printf("len_str %ld\n", strlen(str));
+		printf("x: %d\n", x);
+		i++;
+		if (x < BUF)
+		{
+	//		ptr = 0;
+	//		len = strlen(argv[1]);
+	//		ptr = memmem(str, strlen(str), argv[1], len);
+	//		while (ptr && len-- > 0)
+	//			*(ptr++) = '*';
+			write(1, str, strlen(str));
+		}	
 	}
-	printf("tmp: %s\n", tmp);
-	printf("buf: %s\n", buf);
-	printf("str: %s\n", str);
-	ptr = memmem(str, strlen(str), argv[1], strlen(argv[1]));
-
-
 	return (free(str), 0);
 }
+
