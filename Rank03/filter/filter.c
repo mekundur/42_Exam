@@ -48,7 +48,9 @@ int main(int argc, char **argv)
 			stderr;
 		str = (char *)calloc((i * BUF + 1), sizeof(char));
 		memmove(str, tmp, i * BUF);
+		printf("str: %s\n", str);
 		memmove(str + i * BUF, buf, x);
+		printf("str: %s\n", str);
 		free(tmp);
 		free(buf);
 		printf("str: %s\n", str);
