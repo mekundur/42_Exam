@@ -138,17 +138,64 @@ char	*put_queens(char *board, int n)
 		j = 0;
 		while (j < n)
 		{
-			while (board[i * n + j] == 'x' || board[i *n + j] == 'Q')
+			while (j < n && (board[i * n + j] == 'x' || board[i * n + j] == 'Q'))
 				j++;
-			board[i * n + j] = 'Q';
+			if (j == n)
+				break;
+			if (board[i * n + j] == '_')
+				board[i * n + j] = 'Q';
+			printf("i: %d  j: %d\n", i, j);
+			print_board(board, n);
 			board = horizontal_mask(board, i, n);
 			board = vertical_mask(board, j, n);
 			board = diagonal_mask(board, i, j, n);
+			printf("i: %d  j: %d\n", i, j);
 			print_board(board, n);
 		}
 		i++;
 	}
 	return(board);
+}
+
+void	solutions(char *board, int n)
+{
+	int	queen;
+	int	i;
+	int	j;
+	int	rows[n];
+
+	i = 0;
+	queen = 0;
+	while (i < n)
+		rows[i++] = 0;
+	i = 0;
+	while (i < (n * n))
+	{
+		if (board[i] == 'Q')
+			queen++;
+		i++;
+	}
+	printf("QUEEN: %d\n", queen);
+	if (queen == n)
+	{
+		queen = 0;
+		i = 0;
+		while (i < n)
+		{
+			j = 0;
+			while (j < n)
+			{
+				if(board[j * n + i] == 'Q')
+					rows[queen++] = j + 1; 			
+				j++;
+			}			
+			i++;
+		}
+	}
+	i = 0;
+	while(i < n)
+		printf("%d ", rows[i++]);
+	printf("\n");
 }
 
 int	main(int argc, char **argv)
@@ -166,5 +213,7 @@ int	main(int argc, char **argv)
 
 	board = board_init(board, n);
 	board = put_queens(board, n);
+	solutions(board, n);
+
 
 }
