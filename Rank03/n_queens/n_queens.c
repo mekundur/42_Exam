@@ -32,6 +32,7 @@ void	print_board(char *board, int n)
 		printf("\n");	
 		i++;
 	}
+	printf("\n");	
 }
 
 char	*board_init(char *board, int n)
@@ -46,7 +47,7 @@ char	*board_init(char *board, int n)
 		j = 0;
 		while (j < n)
 		{
-			board[i * n + j] = '0';
+			board[i * n + j] = '_';
 			j++;
 		}
 		i++;
@@ -54,21 +55,29 @@ char	*board_init(char *board, int n)
 	return (board);
 }
 
-char	*horizontal_mask(char *board, int i, int j, int n)
+char	*horizontal_mask(char *board, int i, int n)
 {
+	int	j;
+
+	j = 0;
 	while (j < n)
 	{
-		board[i * n + j] = '-';		
+		if (board[i * n + j] != 'Q')		
+			board[i * n + j] = 'x';		
 		j++;
 	}
 	return(board);
 }
 
-char	*vertical_mask(char *board, int i, int j, int n)
+char	*vertical_mask(char *board, int j, int n)
 {
+	int	i;
+
+	i = 0;
 	while (i < n)
 	{
-		board[i * n + j] = '-';		
+		if (board[i * n + j] != 'Q')		
+			board[i * n + j] = 'x';		
 		i++;
 	}
 	return(board);
@@ -76,11 +85,44 @@ char	*vertical_mask(char *board, int i, int j, int n)
 
 char	*diagonal_mask(char *board, int i, int j, int n)
 {
+	int	tmpi;
+	int	tmpj;
+
+	tmpi = i;
+	tmpj = j;
 	while (i < n && j < n)
 	{
-		board[i * n + j] = '-';	
+		if (board[i * n + j] != 'Q')		
+			board[i * n + j] = 'x';		
 		j++;
 		i++;
+	}
+	i = tmpi;
+	j = tmpj;
+	while (i >= 0 && j >= 0)
+	{
+		if (board[i * n + j] != 'Q')		
+			board[i * n + j] = 'x';		
+		i--;
+		j--;
+	}
+	i = tmpi;
+	j = tmpj;
+	while (i >= 0 && j < n)
+	{
+		if (board[i * n + j] != 'Q')		
+			board[i * n + j] = 'x';		
+		i--;
+		j++;
+	}
+	i = tmpi;
+	j = tmpj;
+	while (i < n && j >= 0)
+	{
+		if (board[i * n + j] != 'Q')		
+			board[i * n + j] = 'x';		
+		i++;
+		j--;
 	}
 	return (board);
 }
@@ -91,19 +133,20 @@ char	*put_queens(char *board, int n)
 	int	j;
 
 	i = 0;
-	j = 1;
 	while (i < n)
 	{
-		j = 1;
+		j = 0;
 		while (j < n)
 		{
-			board[i * n + j] = 'X';
-			board = horizontal_mask(board, i, j + 1, n);
-			board = vertical_mask(board, i + 1, j, n);
-			print_board(board, n);
-			board = diagonal_mask(board, i + 1, j + 1, n);
+			while (board[i * n + j] == 'x' || board[i *n + j] == 'Q')
+				j++;
+			board[i * n + j] = 'Q';
+			board = horizontal_mask(board, i, n);
+			board = vertical_mask(board, j, n);
+			board = diagonal_mask(board, i, j, n);
 			print_board(board, n);
 		}
+		i++;
 	}
 	return(board);
 }
@@ -122,8 +165,6 @@ int	main(int argc, char **argv)
 	printf("board_size: %lu\n", sizeof(*board));
 
 	board = board_init(board, n);
-	print_board(board, n);	
 	board = put_queens(board, n);
-	print_board(board, n);	
 
 }
