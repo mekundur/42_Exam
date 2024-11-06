@@ -1,11 +1,9 @@
-#ifndef 
-# define BUF 10
-#endif
-
+#define BUF 10
 #include "stdlib.h"
 #include "stdio.h"
 #include "unistd.h"
 #include "string.h"
+#include "fcntl.h"
 
 char	*ft_strchr(char *s, int c)
 {
@@ -20,8 +18,8 @@ char	*ft_strchr(char *s, int c)
 
 void	*ft_memcpy(void *dest, const void *src, size_t n)
 {
-	while (--n > c)
-		(char *)dest[n - 1] = (char *)src[n - 1];
+	while (--n > 0)
+		((char *)dest)[n - 1] = ((char *)src)[n - 1];
 	return dest;
 }
 
@@ -58,23 +56,23 @@ int	str_append_str(char **s1, char *s2)
 void	*ft_memmove(void *dest, const void *src, size_t n)
 {
 	if (dest > src)
-		return (ft_memcpy(dest, src, n);
+		return (ft_memcpy(dest, src, n));
 	else if (dest == src)
 		return (dest);
 	size_t i = ft_strlen((char *)src) - 1;
 	while (i >= 0)
 	{
-		(char *)dest[i] = (char *)src[i];
+		((char *)dest)[i] = ((char *)src)[i];
 		i--;
 	}
 	return dest;
 }
 
-char	*get_next_line(fd)
+char	*get_next_line(int fd)
 {
 	static char	b[BUF + 1] = "";
 	char		*ret = NULL;
-	char		*tmp = ft_strchr(b, "\n");
+	char		*tmp = ft_strchr(b, '\n');
 	while(!tmp)
 	{
 		if(!str_append_str(&ret, b))
@@ -92,4 +90,21 @@ char	*get_next_line(fd)
 	}
 	return ret;
 }
+
+int	main(void)
+{
+	int	fd;
+	char	*line;
+
+	fd = open("file", O_RDONLY);
+	while (line)
+	{
+		line = get_next_line(fd);
+		printf("%s\n", line);
+	}
+
+
+
+}
+
 
