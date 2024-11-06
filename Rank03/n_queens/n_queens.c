@@ -127,17 +127,28 @@ char	*diagonal_mask(char *board, int i, int j, int n)
 	return (board);
 }
 
-char	*put_queens(char *board, int n)
+char	*put_queens(char *board, int n, int q)
 {
 	int	i;
 	int	j;
 
+	i = 0;
+	board[q] = 'Q';
+	while (i < q && board[i] == '-')
+		board[i++] = 'x';
+	while (i < n && board[i] == '-')
+		board[i++] = 'x';
 	i = 0;
 	while (i < n)
 	{
 		j = 0;
 		while (j < n)
 		{
+			print_board(board, n);
+			board = horizontal_mask(board, i, n);
+			board = vertical_mask(board, j, n);
+			board = diagonal_mask(board, i, j, n);
+			print_board(board, n);
 			while (j < n && (board[i * n + j] == 'x' || board[i * n + j] == 'Q'))
 				j++;
 			if (j == n)
@@ -145,10 +156,6 @@ char	*put_queens(char *board, int n)
 			if (board[i * n + j] == '_')
 				board[i * n + j] = 'Q';
 			printf("i: %d  j: %d\n", i, j);
-			print_board(board, n);
-			board = horizontal_mask(board, i, n);
-			board = vertical_mask(board, j, n);
-			board = diagonal_mask(board, i, j, n);
 			printf("i: %d  j: %d\n", i, j);
 			print_board(board, n);
 		}
@@ -212,7 +219,7 @@ int	main(int argc, char **argv)
 	printf("board_size: %lu\n", sizeof(*board));
 
 	board = board_init(board, n);
-	board = put_queens(board, n);
+	board = put_queens(board, n, 2);
 	solutions(board, n);
 
 
