@@ -49,21 +49,24 @@ bool solveNQueensUtil(int board[N][N], int row)
 {
     // If all queens are placed, return true
     if (row >= N) {
-        printSolution(board);
+		printf("SOLUTION\n");
+    	    printSolution(board);
         return true; // Return false if you want all solutions
     }
 
     bool success = false;
 
     // Try placing a queen in all columns of the current row
-    for (int col = 0; col < N; col++) {
-        if (isSafe(board, row, col)) {
+    for (int col = 0; col < N; col++)
+    {
+        if (isSafe(board, row, col)) 
+	{
             // Place the queen
             board[row][col] = 1;
-
-            // Recursively place the next queen
-            success = solveNQueensUtil(board, row + 1) || success;
-
+      		printf("row: %d\n", row );
+		printSolution(board);
+	    // Recursively place the next queen
+	    success = solveNQueensUtil(board, row + 1) || success;
             // Backtrack: Remove the queen if it leads to a conflict
             board[row][col] = 0;
         }
@@ -76,6 +79,7 @@ void solveNQueens()
 {
     int board[N][N] = {0}; // Initialize the board with all zeros
 
+    
     if (!solveNQueensUtil(board, 0)) {
         printf("No solution exists for N = %d\n", N);
     }
