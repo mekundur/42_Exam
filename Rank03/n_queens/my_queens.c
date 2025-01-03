@@ -10,19 +10,19 @@ void	print_board(int n, char board[n][n])
 	int	j = 0;
 
 //	printf("n: %d\n", n);
-	while (i < n)
+	while (j < n)
 	{
-		j = 0;
-		while (j < n)
+		i = 0;
+		while (i < n)
 		{
-			if (board[i][j] == 0)
-				printf(". ");
-			else if (board[i][j] == 'Q')
-				printf("Q ");
-			j++;
+		//	if (board[i][j] == 0)
+		//		printf(". ");
+			if (board[i][j] == 'Q')
+				printf("%d ", i);
+			i++;
 		}
-		printf("\n");
-		i++;
+		//printf("\n");
+		j++;
 	}
 	printf("\n");
 }	
@@ -72,32 +72,28 @@ bool	is_safe(int n, char board[n][n], int row, int col)
 void	find_solution(int n, char board[n][n], int row, int queen)
 {
 	int	col = 0;
-	int	i = 0;
-	bool	safe = true;
 		
 //	printf("ROW: %d\n", row);
-	if (row == n){
-		printf("SOLUTION-------\n");
+	if (row == n)
 		print_board(n, board);
-	}
-		col = 0;
-		while (col < n)
+		
+	col = 0;
+	while (col < n)
+	{
+		if (is_safe(n, board, row, col))
 		{
-			if (is_safe(n, board, row, col))
-			{
-				board[row][col] = 'Q';
-				print_board(n, board);
-				find_solution(n, board, row + 1, queen);
-			}	
-			board[row][col] = 0;
-			col++;
-		}
+			board[row][col] = 'Q';
+		//	print_board(n, board);
+			find_solution(n, board, row + 1, queen);
+		}	
+		board[row][col] = 0;
+		col++;
+	}
 }
 
 int	main(int argc, char **argv)
 {
 	int	n;
-	int	col;
 
 	if(argc != 2)
 		return(0);
@@ -108,7 +104,6 @@ int	main(int argc, char **argv)
 		char	board[n][n];
 		memset(board, 0, n * n * sizeof(char));
 //		print_board(n, board);
-		if (board)
-			find_solution(n, board, 0, 0);
+		find_solution(n, board, 0, 0);
 	}
 }
