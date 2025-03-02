@@ -35,6 +35,26 @@ int	ft_strchr(char *s, char c)
 	return (0);
 }
 
+void	ft_strcpy(char *dst, char *src)
+{
+	int	i = 0;
+
+	while (dst && src && src[i])
+	{
+		dst[i] = src[i];
+		i++;	
+	}
+}
+
+void	ft_swap(char *c, char *s)
+{
+	char tmp;
+
+	tmp = *c;
+	*c = *s;
+	*s = tmp;
+}
+
 char	*ft_strcmp(char *s1, char *s2)
 {
 	int	i = 0;
@@ -49,69 +69,63 @@ char	*ft_strcmp(char *s1, char *s2)
 	return 0;
 }
 
-void	put_permutations(int total, int len, char **perm, char *set, int i, int j, int k)
+void	permute(int len, char **perms, char set[len+1], int left, int right, int *index)
 {
-//	int	j = 0;
-//	int	k = 0;
+	int	i;
 
-//	if (i >= len)
-//		i = i % len;	
-	while (k < total)
+	if (left == right)
 	{
-	//	i = 0;
-		while (ft_strlen(perm[k]) < len && i < len)
-		{	
-			if (!ft_strchr(perm[k], set[j]) && j < len)
-			{
-				perm[k][i] = set[j];
-				put_permutations(total, len, perm, set, i + 1, (j + 1) % len, k + 1);
-			}
-			else
-			{
-			//	if (i >= len)
-			//		i = i % len;	
-			//	j = (j + 1) % len;
-				i++;	
-			}
-		}
-//		printf("%d: %s\n", k, perm[k]);
-		k++;
+		perms[*index] = (char *)malloc((len + 1) * sizeof(char));
+		ft_strcpy(perms[*index], set);
+//		printf("SAVED_set: %s\n\n", perms[*index]);
+		(*index)++;
+		return ;
+	}
+	i = left;
+	while (i <= right)
+	{
+//		printf("org_set: %s\n", set);
+		ft_swap(&set[i], &set[left]);
+//		printf("swap_set: %s\n", set);
+		permute(len, perms, set, left + 1, right, index);
+		ft_swap(&set[i], &set[left]);
+//		printf("back_set: %s\n\n", set);
+		i++;
 	}
 
 }
 
 int main(int argc, char **argv)
 {
-	char	*set;
 	int	len = 0;
 	int	total = 0;
 	int	i = 0;
-	int	j = 0;
+	int	index = 0;
 
 	if (argc != 2)
 		return (0);
-	set = argv[1];
-	len = ft_strlen(set);
+
+	len = ft_strlen(argv[1]);
 	total = ft_factorial(len);
-
-	printf("Total: %d\n", total);
+	char set[len + 1];
+	set[len] = 0;
+	ft_strcpy(set, argv[1]);
+//	printf("set: %s\n", set);
+//	printf("Total: %d\n", total);
 	
-	char	**perm = NULL;
-	perm = (char **)malloc(total * sizeof(char *));
+	char	**perms = NULL;
+	perms = (char **)malloc(total * sizeof(char *));
 	
-	i = 0;
-	while (i < total)
-		perm[i++] = (char *)calloc((len + 1), sizeof(char));
-	
-	put_permutations(total, len, perm, set, 0, 0, 0);
-	
+	permute(len, perms, set, 0, len - 1, &index);
 
 	i = 0;
-	while (i < total)
-		printf("%d: %s\n", i, perm[i++]);
-
+	while (perms && perms[i])
+	{
+		printf("%d: %s\n", i + 1, perms[i]);
+		i++;
+	}
 	i = 0;
 	while (i < total)
-		free(perm[i++]);
-	free(perm);
+		free(perms[i++]);
+	free(perms);
 }
