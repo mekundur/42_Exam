@@ -7,61 +7,36 @@
 
 int	picoshell(char **cmds[])
 {	
-	char	***tmp;
-	int	i;
-	int	j;
+	int	i = 0;
 	int	num = 0;
 	int	pfd[2];
-	int	cfd1;
-	int	cfd2;
+	int	prev = 0;
 
+	while (cmds && cmds[num])
+		num++;
 	i = 0;
-	while (cmds && cmds[i])
-		i++;
-	num = i;
-	printf("%d\n", num);
-
-/*	tmp = cmds;
-	i = 0;
-	while (tmp && tmp[i])
+	//while (cmds && cmds[i])
+	while (i < num)
 	{
-		j = 0;
-		while (tmp[i][j])
+		pipe(pfd);
+		if(!fork())
 		{
-			dprintf(2, "%s ", tmp[i][j]);
-			j++;
+			dup2(prev, 0);
+			if (i < (num - 1))
+				dup2(pfd[1], 1);
+			close(pfd[0]);
+			close(pfd[1]);	
+			execvp(cmds[i][0], cmds[i]);		
 		}
-		dprintf(2, "\n");
+		prev = pfd[0];
+	//	close(pfd[0]);
+		close(pfd[1]);
 		i++;
 	}
-*/
-	pipe(pfd);
-	i = 0;
-	while (cmds && cmds[i])
-	{
-		cfd2 = fork();
-		if (cfd1 == 0)
-		{
-			dup2(pfd[1], 1);
-			execvp(cmds[i][0], cmds[i]);		
-			close(pfd[0]);
-			close(pfd[1]);
-		}	
-		i++;
-		cfd2 = fork();
-		if (cfd2 == 0)
-		{
-			dup2(pfd[0], 0);
-			execvp(cmds[i][0], cmds[i]);		
-			close(pfd[0]);
-			close(pfd[1]);
-		}
-		i++;
-	}
-	wait(NULL);
-	wait(NULL);
-	close(pfd[0]);
-	close(pfd[1]);
+	for (i=0; i<num; i++) 
+		wait(NULL);
+	for (i=3; i<3+num; i++)
+		close(i);
 	return (0);
 }
 
@@ -89,7 +64,7 @@ int	main(int argc, char **argv)
 			argv[i] = NULL;
 			cmds_i++;
 		}
-	printf("%d\n", cmds_i);
+//	printf("%d\n", cmds_i);
 	int ret = picoshell(cmds);
 	if (ret)
 		perror ("picoshell");

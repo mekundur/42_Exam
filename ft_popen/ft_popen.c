@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include "get_next_line.h"
 
-// solution that worked in the exam!
+// SOLUTION THAT WORKED IN THE EXAM!
 
 int	ft_popen(char const *file, char *const argv[], char type)
 {
@@ -37,7 +37,7 @@ int	ft_popen(char const *file, char *const argv[], char type)
 		return(fd[0]);	
 	}
 	else
-		return (1);
+		return (0);
 }
 
 int	main(void)
