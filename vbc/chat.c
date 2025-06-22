@@ -39,7 +39,7 @@ void	unexpected(char c)
 		printf("Unexpected end of input\n");
 }
 
-int	accept(char **s, char c) {
+int		accept(char **s, char c) {
 	if (**s == c) {
 		(*s)++;
 		return 1;
@@ -54,28 +54,30 @@ int expect(char **s, char c) {
 	return 0;
 }
 
-//////// YOUR CODE
-node *parse_expr_internal(char **s);
+// YOUR CODE
 
-node *parse_val(char **s) {
-	if (isdigit(**s)) {
-		node n = {VAL, **s - '0', NULL, NULL};
-		(*s)++;
-		return new_node(n);
-	} else if (accept(s, '(')) {
-		node *e = parse_expr_internal(s);
-		if (!e || !expect(s, ')')) {
-			destroy_tree(e);
+node    *parse_expr(char *s);
+
+node	*parse_val(char **s) 
+{
+	if (accept(s, '(')) {
+		node *n = parse_expr(*s);
+		if (!n || !expect(s, ')')) {
+			destroy_tree(n);
 			return NULL;
 		}
-		return e;
-	} else {
-		unexpected(**s);
-		return NULL;
+		return n;
+	} else if (isdigit(**s)) {
+		node n = {.type = VAL, .val = **s - '0', .l = NULL, .r = NULL};
+		(*s)++;
+		return new_node(n);
 	}
+	unexpected(**s);
+	return NULL;
 }
 
-node *parse_term(char **s) {
+node	*parse_term(char **s)
+{
 	node *left = parse_val(s);
 	if (!left)
 		return NULL;
@@ -85,7 +87,7 @@ node *parse_term(char **s) {
 			destroy_tree(left);
 			return NULL;
 		}
-		node n = {MULTI, 0, left, right};
+		node n = {.type = MULTI, .l = left, .r = right};
 		left = new_node(n);
 		if (!left) {
 			destroy_tree(n.l);
@@ -96,47 +98,36 @@ node *parse_term(char **s) {
 	return left;
 }
 
-node *parse_expr_internal(char **s) {
-	node *left = parse_term(s);
-	if (!left)
+node	*parse_expr(char *s) 
+{
+	node *tree;
+
+	// YOUR CODE
+	char *p = s;
+	tree = parse_term(&p);
+	if (!tree)
 		return NULL;
-	while (accept(s, '+')) {
-		node *right = parse_term(s);
+	while (accept(&p, '+')) {
+		node *right = parse_term(&p);
 		if (!right) {
-			destroy_tree(left);
+			destroy_tree(tree);
 			return NULL;
 		}
-		node n = {ADD, 0, left, right};
-		left = new_node(n);
-		if (!left) {
+		node n = {.type = ADD, .l = tree, .r = right};
+		tree = new_node(n);
+		if (!tree) {
 			destroy_tree(n.l);
 			destroy_tree(n.r);
 			return NULL;
 		}
 	}
-	return left;
-}
-
-node *parse_expr(char *s) {
-	node *tree = parse_expr_internal(&s);
-	if (*s) {
-		unexpected(*s);
+	if (*p) {
+		unexpected(*p);
 		destroy_tree(tree);
 		return NULL;
 	}
 	return tree;
 }
-
-// node	*parse_expr(char *s) {
-// 	node *tree;
-// 	// YOUR CODE
-// 	if (*s) {
-// 		destroy_tree(tree);
-// 		return NULL;
-// 	}
-// 	return tree;
-// }
-//////////////////////////////////////////
 
 int	eval_tree(node *tree) {
 	switch (tree->type) {
@@ -147,6 +138,7 @@ int	eval_tree(node *tree) {
 		case VAL:
 			return tree->val;
 	}
+	return 0;
 }
 
 int main(int argc, char **argv) {
@@ -158,3 +150,4 @@ int main(int argc, char **argv) {
 	printf("%d\n", eval_tree(tree));
 	destroy_tree(tree);
 }
+

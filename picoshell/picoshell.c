@@ -21,10 +21,10 @@ int	picoshell(char **cmds[])
 		pipe(pfd);
 		if(!fork())
 		{
-		//	if (prev){
+			if (prev){
 				dup2(prev, 0);
-		//		close(prev);
-		//	}
+				close(prev);
+			}
 			if (i < (num - 1))
 				dup2(pfd[1], 1);
 			close(pfd[0]);
@@ -32,7 +32,7 @@ int	picoshell(char **cmds[])
 			execvp(cmds[i][0], cmds[i]);		
 		}
 		prev = pfd[0];
-	//	close(pfd[0]); // when this is kept and command is more than 2 program kept hanged
+		// close(pfd[0]); // when this is kept and command is more than 2 program kept hanged
 		close(pfd[1]);
 		i++;
 	}
