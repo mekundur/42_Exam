@@ -13,6 +13,7 @@ tests=(
   "(((((2+2)*2+2)*2+2)*2+2)*2+2)*2|188$"
   "1+|Unexpected end of input$"
   "1+2)|Unexpected token ')'$"
+  "2*(5+6|Unexpected end of input$"
 )
 
 echo "Running tests..."
