@@ -1,9 +1,9 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <ctype.h>
+#include "stdio.h"
+#include "unistd.h"
+#include "stdlib.h"
+#include "ctype.h"
 
-const char *input;
+const char *s;
 
 void	unexpected(char c)
 {
@@ -11,66 +11,67 @@ void	unexpected(char c)
 		printf("Unexpected token '%c'\n", c);
 	else
 		printf("Unexpected end of input\n");
-	exit(1);
+	exit (1);
 }
 
-int expr();
+int	expr();
 
-int factor() 
+int	factor()
 {
-	char c = *input;
-	
-	if (isdigit(c)) 
-		return *(input++) - '0';	
-	else if (c == '(') 
+	int	val = 0;
+
+	if (isdigit(*s))
+		val = *s++ - 48;
+	else if (*s == '(')	
 	{
-        	input++; // consume '('
-        	int val = expr();
-        	if (*input != ')')
-            	unexpected(*input ? *input : 0);
-        	input++; // consume ')'
-        	return val;
-   	}
+		s++;
+		val = expr();
+		if (*s != ')')
+			unexpected(*s);
+		s++;
+	}
 	else
-		unexpected(*input);
-	return 0;
-}
-
-int multi()
-{
-	int val = factor();
-
-	while (*input == '*') 
-	{
-        	input++;
-       		val *= factor();
-    	}
-    	return val;
-}
-
-int expr()
-{
-	int val = multi();
+		unexpected(*s);
 	
-	while (*input == '+') 
+	return val;
+}
+
+int	multi()
+{
+	int 	val = factor();
+
+	while (*s == '*')
 	{
-        	input++;
-        	val += multi();
+		s++;
+		val *= factor();
 	}
 	return val;
 }
 
-int main(int argc, char **argv) 
+
+int	expr()
+{
+	int	val = multi();
+	
+	while (*s == '+')
+	{
+		s++;
+		val += multi();
+	}
+	return val;
+}
+
+int	main(int argc, char **argv)
 {
 	if (argc != 2)
-        	return 1;
-   	input = argv[1];
-    
-	int result;
-	result = expr();
+		return 1;
+	s = argv[1];
 
-	if (*input != '\0')
-		unexpected(*input);
- 	printf("%d\n", result);
+	int val = expr();
+
+	if (*s)
+		unexpected(*s);
+	printf("%d\n", val);
 	return 0;
+
 }

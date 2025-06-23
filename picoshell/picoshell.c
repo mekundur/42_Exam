@@ -15,31 +15,27 @@ int	picoshell(char **cmds[])
 	while (cmds && cmds[num])
 		num++;
 	i = 0;
-	//while (cmds && cmds[i])
 	while (i < num)
 	{
 		pipe(pfd);
 		if(!fork())
 		{
-			if (prev){
-				dup2(prev, 0);
-				close(prev);
-			}
+			dup2(prev, 0);
 			if (i < (num - 1))
 				dup2(pfd[1], 1);
 			close(pfd[0]);
 			close(pfd[1]);	
 			execvp(cmds[i][0], cmds[i]);		
 		}
+		if (prev > 0)
+			close(prev);
 		prev = pfd[0];
-		// close(pfd[0]); // when this is kept and command is more than 2 program kept hanged
 		close(pfd[1]);
 		i++;
 	}
-	while (wait(NULL) > 0)
-		;
-	for (i=0; i < 3 + num; i++)
-		close(i);
+	for (i = 0; i < num; i++)
+		wait(NULL);
+	close(pfd[0]);
 	return (0);
 }
 
