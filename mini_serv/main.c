@@ -11,7 +11,7 @@
 int extract_message(char **buf, char **msg)
 {
 	char *newbuf;
-	int i;127.0.0.1
+	int i;
 
 	*msg = 0;
 	if (*buf == 0)
@@ -57,7 +57,8 @@ char *str_join(char *buf, char *add)
 
 int main()
 {
-	int sockfd, connfd, len;
+	int sockfd, connfd;
+	unsigned int len;
 	struct sockaddr_in servaddr, cli;
 
 	// socket create and verification
