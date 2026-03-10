@@ -58,7 +58,9 @@ char *str_join(char *buf, char *add)
 int main()
 {
 	int sockfd, connfd;
-	unsigned int len;
+
+	unsigned int len; /////// NOT IN THE ORIGINAL SUBJECT *****
+
 	struct sockaddr_in servaddr, cli;
 
 	// socket create and verification
